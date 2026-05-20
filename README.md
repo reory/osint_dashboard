@@ -20,10 +20,11 @@ A powerful, full-stack Open Source Intelligence (OSINT) workstation that automat
 <details>
   <summary>📸 Screenshots</summary>
 
-![main dashboard1](screenshots\dashboard1.png)
-![view discovered profiles1](screenshots\dashboard2.png)
-![main dashboard2](screenshots\dashboard3.png)
-![view discovered profiles2](screenshots\dashboard4.png)
+![main dashboard1](screenshots/dashboard1.png)
+![view discovered profiles1](screenshots/dashboard2.png)
+![main dashboard2](screenshots/dashboard3.png)
+![view discovered profiles2](screenshots/dashboard4.png)
+
 </details>
 
 ---
