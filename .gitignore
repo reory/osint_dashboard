@@ -1,0 +1,30 @@
+# Explicitly ignore all generated Maigret target scan reports
+reports/report_*.json
+reports/*.json
+
+# Python Environment & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.hypothesis/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.env/
+
+# Django Specifics
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Operating System & IDE Artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

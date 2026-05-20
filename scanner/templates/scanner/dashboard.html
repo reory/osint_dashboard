@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OSINT Username Recon Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 40px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .search-box { background: #f8fafc; padding: 20px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 30px; }
+        input[type="text"] { width: 70%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 16px; }
+        
+        /* Interactive Buttons Base */
+        button { padding: 10px 20px; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: 500; }
+        .btn-primary { background: #2563eb; }
+        .btn-primary:hover { background: #1d4ed8; }
+        
+        /* Clear History Destructive Button Styling */
+        .btn-danger { background: #dc2626; font-size: 14px; padding: 8px 16px; }
+        .btn-danger:hover { background: #b91c1c; }
+        
+        /* Flex Header layout row */
+        .table-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 10px; }
+        .table-header-row h2 { margin: 0; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f1f5f9; color: #475569; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .pending { background: #e2e8f0; color: #475569; }
+        .running { background: #dbeafe; color: #2563eb; }
+        .completed { background: #dcfce7; color: #15803d; }
+        .failed { background: #fee2e2; color: #b91c1c; }
+        a { color: #2563eb; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OSINT Username Recon Dashboard</h1>
+        
+        <div class="search-box">
+            <form action="{% url 'trigger_scan' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Enter target username..." required>
+                <button type="submit" class="btn-primary">Launch Maigret Scan</button>
+            </form>
+        </div>
+
+        <div class="table-header-row">
+            <h2>Search History & Targets</h2>
+            
+            <form action="{% url 'clear_history' %}" method="POST" onsubmit="return confirm('Are you sure you want to permanently clear all scan history? This action cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger">Clear Search History</button>
+            </form>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Username Target</th>
+                    <th>Status</th>
+                    <th>Last Updated</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in searches %}
+                <tr>
+                    <td><strong>{{ s.username }}</strong></td>
+                    <td><span class="badge {{ s.status }}">{{ s.status }}</span></td>
+                    <td>{{ s.updated_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <a href="{% url 'view_results' s.id %}">View Discovered Profiles</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #64748b;">No username scans launched yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

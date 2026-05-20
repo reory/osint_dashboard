@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OSINT Intelligence Report: {{ search.username }}</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; margin: 0; padding: 40px; color: #1e293b; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #2563eb; text-decoration: none; font-weight: bold; }
+        
+        /* Summary Banner Card */
+        .report-header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .report-header h1 { margin: 0; font-size: 28px; letter-spacing: -0.5px; }
+        .meta-grid { display: flex; gap: 40px; margin-top: 15px; font-size: 14px; opacity: 0.9; }
+        
+        /* Profile Target Card List Layout */
+        .grid-container { display: flex; flex-direction: column; gap: 20px; }
+        .profile-card { background: white; border-radius: 10px; padding: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; display: flex; gap: 20px; align-items: flex-start; }
+        
+        /* Avatar Image Rendering Box */
+        .avatar-box { width: 70px; height: 70px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-weight: bold; color: #475569; font-size: 24px; border: 2px solid #cbd5e1; flex-shrink: 0; }
+        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Card Text Layout details */
+        .profile-details { flex-grow: 1; }
+        .title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+        .site-title { font-size: 20px; font-weight: bold; color: #0f172a; }
+        .fullname-text { font-size: 15px; font-weight: 600; color: #475569; }
+        
+        .bio-box { font-size: 14px; color: #475569; margin: 10px 0; line-height: 1.5; background: #f8fafc; padding: 10px 14px; border-radius: 6px; border-left: 3px solid #cbd5e1; }
+        
+        /* Badges styling */
+        .tag-badge { background: #e0e7ff; color: #4338ca; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-right: 5px; }
+        .loc-badge { font-size: 12px; color: #64748b; font-weight: 500; }
+        
+        /* Launch Outbound Account Link Button */
+        .visit-btn { padding: 10px 18px; background: #10b981; color: white; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; align-self: center; white-space: nowrap; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
+        .visit-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'dashboard_home' %}" class="back-btn">← Back to Main Dashboard</a>
+        
+        <div class="report-header">
+            <h1>Target Dossier: {{ search.username }}</h1>
+            <div class="meta-grid">
+                <div>Scan Status: <span style="background: #2563eb; padding: 2px 8px; border-radius: 4px; font-weight: bold;">{{ search.status }}</span></div>
+                <div>Confirmed Footprints: <strong>{{ cleaned_profiles|length }} Platforms Matched</strong></div>
+            </div>
+        </div>
+
+        <h2>Discovered Intelligence Feeds</h2>
+        <div class="grid-container">
+            {% for profile in cleaned_profiles %}
+            <div class="profile-card">
+                
+                <div class="avatar-box">
+                    {% if profile.image %}
+                        <img src="{{ profile.image }}" alt="Profile Avatar" onerror="this.style.display='none';">
+                    {% else %}
+                        {{ profile.site|slice:":1" }}
+                    {% endif %}
+                </div>
+                
+                <div class="profile-details">
+                    <div class="title-row">
+                        <span class="site-title">{{ profile.site }}</span>
+                        {% if profile.fullname and profile.fullname != 'N/A' %}
+                            <span class="fullname-text">• Name: {{ profile.fullname }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        {% for tag in profile.tags %}
+                            <span class="tag-badge">{{ tag }}</span>
+                        {% endfor %}
+                        <span class="loc-badge">📍 {{ profile.location }}</span>
+                        {% if profile.followers %}
+                            <span class="loc-badge"> | 👥 Followers: {{ profile.followers }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="bio-box">
+                        {{ profile.bio }}
+                    </div>
+                </div>
+                
+                <a href="{{ profile.url }}" target="_blank" class="visit-btn">Investigate Profile →</a>
+            </div>
+            {% empty %}
+            <div style="text-align: center; color: #64748b; padding: 50px; background: white; border: 2px dashed #cbd5e1; border-radius: 12px;">
+                <h3>No Intelligence Profiles Rendered Yet</h3>
+                <p style="margin: 0;">This happens if the scan is still running or no matching profile files were processed on disk.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
