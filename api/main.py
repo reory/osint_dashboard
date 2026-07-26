@@ -1,13 +1,14 @@
 """Async FastAPI service that runs Maigret username scans in the background
 and sends results/status updates back to a Django backend via webhooks."""
 
-import logging
 import json
+import logging
 import os
 import subprocess
-from fastapi import FastAPI, BackgroundTasks
-from pydantic import BaseModel, Field, field_validator
+
 import requests
+from fastapi import BackgroundTasks, FastAPI
+from pydantic import BaseModel, Field, field_validator
 
 app = FastAPI(title="OSINT Dashboard Async Engine")
 
@@ -142,7 +143,7 @@ def run_maigret_cli_scan(username: str, search_id: int):
         )
     except Exception as e:
         logger.error(
-            f"Background worker encountered an unhandled error: {str(e)}"
+            f"Background worker encountered an unhandled error: {e!s}"
         )
         requests.post(
             "http://127.0.0.1:8000/webhook/status/",

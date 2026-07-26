@@ -1,13 +1,16 @@
 """Django webhook and UI views that receive scan results from FastAPI and
 render OSINT search data to the dashboard."""
 
-import os
 import json
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+import os
+
 import requests
-from .models import TargetSearch, DiscoveredProfile
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import DiscoveredProfile, TargetSearch
+
 
 @csrf_exempt
 def webhook_update_status(request):

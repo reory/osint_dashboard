@@ -1,5 +1,6 @@
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+
 
 class TargetSearch(models.Model):
     """Stores the username search request and its tracking state."""

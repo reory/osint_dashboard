@@ -1,8 +1,10 @@
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given
+from hypothesis import strategies as st
 
 # Valid states the application allows for a search lifecycle
-VALID_STATUSES = ['pending', 'running', 'completed', 'failed']
+VALID_STATUSES = ["pending", "running", "completed", "failed"]
+
 
 class MockTargetSearch:
     """Simulates your real Django TargetSearch database model constraints."""
@@ -11,11 +13,11 @@ class MockTargetSearch:
         # Django CharFields have a max length limitation (typically 150 or 255)
         if len(username) > 150:
             raise ValueError("Data too long for database column column (max 150)")
-            
+
         # Hardens status fields to ensure bad telemetry states don't pollute rows
         if status not in VALID_STATUSES:
             raise ValueError(f"Invalid status state: {status}")
-            
+
         self.username = username
         self.status = status
 
@@ -47,7 +49,7 @@ def test_database_enforces_maximum_length_boundaries(overflow_username):
     """
     CRITICAL CONSTRAINT CHECK
     Hypothesis will generate strings exceeding 150 characters.
-    We assert that the model infrastructure strictly catches and blocks
+    Assert that the model infrastructure strictly catches and blocks
     overflow states, preventing silent truncation inside SQLite/PostgreSQL.
     """
     with pytest.raises(ValueError, match="Data too long"):
@@ -57,12 +59,12 @@ def test_database_enforces_maximum_length_boundaries(overflow_username):
 @given(st.text())
 def test_database_rejects_corrupted_status_states(garbage_status):
     """
-    Ensures that rogue strings sent over the wire cannot inject invalid 
+    Ensures that rogue strings sent over the wire cannot inject invalid
     states into the operational data tracking columns.
     """
     # If Hypothesis happens to generate a valid keyword, skip it
     if garbage_status in VALID_STATUSES:
         return
-        
+
     with pytest.raises(ValueError, match="Invalid status state"):
         MockTargetSearch(username="valid_user", status=garbage_status)

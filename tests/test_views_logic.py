@@ -1,6 +1,6 @@
 # This test file targets the Django report pathing and data rendering.
 
-import pytest
+import pytest #noqa
 from hypothesis import given, strategies as st
 
 def clean_path_logic(username_input):
