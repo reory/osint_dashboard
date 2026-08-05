@@ -6,6 +6,7 @@ import logging
 import os
 import subprocess
 
+import httpx
 import requests
 from fastapi import BackgroundTasks, FastAPI
 from pydantic import BaseModel, Field, field_validator
@@ -141,7 +142,7 @@ def run_maigret_cli_scan(username: str, search_id: int):
             "http://127.0.0.1:8000/webhook/status/",
             json={"search_id": search_id, "status": "failed"},
         )
-    except Exception as e:
+    except (httpx.HTTPError, httpx.RequestError) as e:
         logger.error(
             f"Background worker encountered an unhandled error: {e!s}"
         )
